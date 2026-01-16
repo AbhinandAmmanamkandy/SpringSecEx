@@ -1,9 +1,9 @@
 package com.abhinand.SpringSecEx.service;
 
+import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
 
 import com.abhinand.SpringSecEx.model.User;
 import com.abhinand.SpringSecEx.repository.UserRepository;

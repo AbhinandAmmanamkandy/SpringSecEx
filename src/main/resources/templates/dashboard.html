@@ -1,9 +1,850 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #4b6cb7, #182848);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-section, .list-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #182848;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eaeaea;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #4b6cb7;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #4b6cb7;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #3a5795;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .asset-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .asset-item {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4b6cb7;
+            transition: transform 0.2s;
+        }
+
+        .asset-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .asset-item.deleted {
+            border-left-color: #dc3545;
+            opacity: 0.8;
+            background-color: #f8f9fa;
+        }
+
+        .asset-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .asset-name {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #182848;
+        }
+
+        .asset-id {
+            background-color: #e9ecef;
+            color: #495057;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .asset-description {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .asset-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-deleted {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .asset-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            border-radius: 4px;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 10px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot-active {
+            background-color: #28a745;
+        }
+
+        .dot-deleted {
+            background-color: #dc3545;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: opacity 0.3s, transform 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background-color: #28a745;
+        }
+
+        .notification.error {
+            background-color: #dc3545;
+        }
+
+        .notification.info {
+            background-color: #17a2b8;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+
+        .empty-list {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-list i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .api-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ccc;
+        }
+
+        .api-dot.connected {
+            background-color: #28a745;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .view-toggle {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .view-toggle button {
+            border-radius: 6px 6px 0 0;
+            background-color: transparent;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            padding: 10px 20px;
+        }
+
+        .view-toggle button.active {
+            color: #4b6cb7;
+            border-bottom: 3px solid #4b6cb7;
+            background-color: rgba(75, 108, 183, 0.05);
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid #eaeaea;
+        }
+    </style>
 </head>
 <body>
-    This is dashboard
+    <div class="container">
+        <div class="main-content">
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-plus-circle"></i> Asset Form</h2>
+                <form id="assetForm">
+                    <div class="form-group">
+                        <label for="assetId">ID (Auto-generated on create)</label>
+                        <input type="text" id="assetId" placeholder="Leave empty for new asset" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="assetName">Name *</label>
+                        <input type="text" id="assetName" placeholder="Enter asset name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="assetDescription">Description</label>
+                        <textarea id="assetDescription" placeholder="Enter asset description"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="assetDeleted">Status</label>
+                        <div class="status-indicator">
+                            <span class="status-dot" id="statusDot"></span>
+                            <span id="statusText">Active</span>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="submit" id="saveBtn" class="btn-primary">
+                            <i class="fas fa-save"></i> Create Asset
+                        </button>
+                        <button type="button" id="updateBtn" class="btn-success" disabled>
+                            <i class="fas fa-edit"></i> Update Asset
+                        </button>
+                        <button type="button" id="cancelBtn" class="btn-secondary" disabled>
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button type="button" id="deleteBtn" class="btn-danger" disabled>
+                            <i class="fas fa-trash"></i> Soft Delete
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="api-status">
+                    <span class="api-dot" id="apiDot"></span>
+                    <span id="apiStatus">Connecting to API...</span>
+                </div>
+            </div>
+            
+            <div class="list-section">
+                <h2 class="section-title"><i class="fas fa-list"></i> Asset List</h2>
+                
+                <div class="view-toggle">
+                    <button id="viewAllBtn" class="active">All Assets</button>
+                    <button id="viewActiveBtn">Active Only</button>
+                    <button id="viewDeletedBtn">Deleted Only</button>
+                </div>
+                
+                <div class="asset-list" id="assetList">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Loading assets...
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Spring Boot Asset Management API | Soft Delete Implementation</p>
+            <p>Base URL: <span id="baseUrl">http://localhost:8080/assets</span></p>
+        </footer>
+    </div>
+    
+    <div id="notificationArea"></div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8080/assets';
+        let currentAssetId = null;
+        let currentView = 'all';
+        
+        const assetForm = document.getElementById('assetForm');
+        const assetIdInput = document.getElementById('assetId');
+        const assetNameInput = document.getElementById('assetName');
+        const assetDescriptionInput = document.getElementById('assetDescription');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const saveBtn = document.getElementById('saveBtn');
+        const updateBtn = document.getElementById('updateBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const assetList = document.getElementById('assetList');
+        const apiDot = document.getElementById('apiDot');
+        const apiStatus = document.getElementById('apiStatus');
+        
+        const viewAllBtn = document.getElementById('viewAllBtn');
+        const viewActiveBtn = document.getElementById('viewActiveBtn');
+        const viewDeletedBtn = document.getElementById('viewDeletedBtn');
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            testApiConnection();
+            
+            loadAssets();
+            
+            setupEventListeners();
+        });
+        
+        function setupEventListeners() {
+            assetForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (currentAssetId) {
+                    updateAsset();
+                } else {
+                    createAsset();
+                }
+            });
+            
+            updateBtn.addEventListener('click', updateAsset);
+            cancelBtn.addEventListener('click', resetForm);
+            deleteBtn.addEventListener('click', softDeleteAsset);
+            
+            viewAllBtn.addEventListener('click', function() {
+                setActiveView('all');
+                loadAssets();
+            });
+            
+            viewActiveBtn.addEventListener('click', function() {
+                setActiveView('active');
+                loadAssets();
+            });
+            
+            viewDeletedBtn.addEventListener('click', function() {
+                setActiveView('deleted');
+                loadAssets();
+            });
+        }
+        
+        function setActiveView(view) {
+            currentView = view;
+            
+            viewAllBtn.classList.remove('active');
+            viewActiveBtn.classList.remove('active');
+            viewDeletedBtn.classList.remove('active');
+            
+            if (view === 'all') {
+                viewAllBtn.classList.add('active');
+            } else if (view === 'active') {
+                viewActiveBtn.classList.add('active');
+            } else if (view === 'deleted') {
+                viewDeletedBtn.classList.add('active');
+            }
+        }
+        
+        function testApiConnection() {
+            fetch(API_BASE_URL)
+                .then(response => {
+                    if (response.ok) {
+                        apiDot.classList.add('connected');
+                        apiStatus.textContent = 'Connected to API';
+                    } else {
+                        apiStatus.textContent = 'API responded with error';
+                    }
+                })
+                .catch(error => {
+                    console.error('API connection error:', error);
+                    apiStatus.textContent = 'Cannot connect to API';
+                });
+        }
+        
+        function loadAssets() {
+            assetList.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading assets...</div>';
+            
+            fetch(API_BASE_URL)
+                .then(response => response.json())
+                .then(assets => {
+                    let filteredAssets = assets;
+                    if (currentView === 'active') {
+                        filteredAssets = assets.filter(asset => !asset.deleted);
+                    } else if (currentView === 'deleted') {
+                        filteredAssets = assets.filter(asset => asset.deleted);
+                    }
+                    
+                    displayAssets(filteredAssets);
+                })
+                .catch(error => {
+                    console.error('Error loading assets:', error);
+                    assetList.innerHTML = '<div class="empty-list"><i class="fas fa-exclamation-triangle"></i><p>Error loading assets. Please check API connection.</p></div>';
+                    showNotification('Error loading assets', 'error');
+                });
+        }
+        
+        function displayAssets(assets) {
+            if (assets.length === 0) {
+                let message = 'No assets found';
+                if (currentView === 'active') message = 'No active assets found';
+                if (currentView === 'deleted') message = 'No deleted assets found';
+                
+                assetList.innerHTML = `
+                    <div class="empty-list">
+                        <i class="fas fa-inbox"></i>
+                        <p>${message}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            assetList.innerHTML = '';
+            
+            assets.forEach(asset => {
+                const assetElement = document.createElement('div');
+                assetElement.className = `asset-item ${asset.deleted ? 'deleted' : ''}`;
+                assetElement.innerHTML = `
+                    <div class="asset-header">
+                        <div class="asset-name">${asset.name || 'Unnamed Asset'}</div>
+                        <div class="asset-id">ID: ${asset.id}</div>
+                    </div>
+                    <div class="asset-description">${asset.description || 'No description provided'}</div>
+                    <div class="asset-status ${asset.deleted ? 'status-deleted' : 'status-active'}">
+                        ${asset.deleted ? 'Deleted' : 'Active'}
+                    </div>
+                    <div class="asset-actions">
+                        <button class="action-btn btn-primary" onclick="editAsset(${asset.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        ${asset.deleted ? 
+                            `<button class="action-btn btn-success" onclick="restoreAsset(${asset.id})">
+                                <i class="fas fa-undo"></i> Restore
+                            </button>` : 
+                            `<button class="action-btn btn-danger" onclick="confirmDelete(${asset.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>`
+                        }
+                    </div>
+                `;
+                
+                assetList.appendChild(assetElement);
+            });
+        }
+        
+        function createAsset() {
+            const asset = {
+                name: assetNameInput.value.trim(),
+                description: assetDescriptionInput.value.trim(),
+                deleted: false
+            };
+            
+            if (!asset.name) {
+                showNotification('Asset name is required', 'error');
+                return;
+            }
+            
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+            
+            fetch(API_BASE_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(asset)
+            })
+            .then(response => response.json())
+            .then(newAsset => {
+                showNotification('Asset created successfully', 'success');
+                resetForm();
+                loadAssets();
+            })
+            .catch(error => {
+                console.error('Error creating asset:', error);
+                showNotification('Error creating asset', 'error');
+            })
+            .finally(() => {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Create Asset';
+            });
+        }
+        
+        function updateAsset() {
+            if (!currentAssetId) return;
+            
+            const asset = {
+                name: assetNameInput.value.trim(),
+                description: assetDescriptionInput.value.trim(),
+                deleted: statusText.textContent === 'Deleted'
+            };
+            
+            if (!asset.name) {
+                showNotification('Asset name is required', 'error');
+                return;
+            }
+            
+            updateBtn.disabled = true;
+            updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+            
+            fetch(`${API_BASE_URL}/${currentAssetId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(asset)
+            })
+            .then(response => response.json())
+            .then(updatedAsset => {
+                showNotification('Asset updated successfully', 'success');
+                resetForm();
+                loadAssets();
+            })
+            .catch(error => {
+                console.error('Error updating asset:', error);
+                showNotification('Error updating asset', 'error');
+            })
+            .finally(() => {
+                updateBtn.disabled = false;
+                updateBtn.innerHTML = '<i class="fas fa-edit"></i> Update Asset';
+            });
+        }
+        
+        function editAsset(id) {
+            currentAssetId = id;
+            
+            fetch(`${API_BASE_URL}/${id}`)
+                .then(response => response.json())
+                .then(asset => {
+                    assetIdInput.value = asset.id;
+                    assetNameInput.value = asset.name || '';
+                    assetDescriptionInput.value = asset.description || '';
+                    
+                    if (asset.deleted) {
+                        statusDot.className = 'status-dot dot-deleted';
+                        statusText.textContent = 'Deleted';
+                        statusDot.style.backgroundColor = '#dc3545';
+                    } else {
+                        statusDot.className = 'status-dot dot-active';
+                        statusText.textContent = 'Active';
+                        statusDot.style.backgroundColor = '#28a745';
+                    }
+                    
+                    saveBtn.disabled = true;
+                    updateBtn.disabled = false;
+                    cancelBtn.disabled = false;
+                    deleteBtn.disabled = asset.deleted;
+                    
+                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Create Asset';
+                    updateBtn.innerHTML = '<i class="fas fa-edit"></i> Update Asset';
+                    
+                    document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+                    
+                    showNotification(`Editing asset #${asset.id}`, 'info');
+                })
+                .catch(error => {
+                    console.error('Error fetching asset:', error);
+                    showNotification('Error loading asset details', 'error');
+                });
+        }
+        
+        function confirmDelete(id) {
+            if (confirm('Are you sure you want to soft delete this asset? It can be restored later.')) {
+                softDeleteAsset(id);
+            }
+        }
+        
+        function softDeleteAsset(id = null) {
+            const assetId = id || currentAssetId;
+            if (!assetId) return;
+            
+            deleteBtn.disabled = true;
+            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+            
+            fetch(`${API_BASE_URL}/${assetId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    showNotification('Asset soft-deleted successfully', 'success');
+                    resetForm();
+                    loadAssets();
+                } else {
+                    throw new Error('Delete failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting asset:', error);
+                showNotification('Error deleting asset', 'error');
+            })
+            .finally(() => {
+                deleteBtn.disabled = false;
+                deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Soft Delete';
+            });
+        }
+        
+        function restoreAsset(id) {
+            fetch(`${API_BASE_URL}/${id}`)
+                .then(response => response.json())
+                .then(asset => {
+                    asset.deleted = false;
+                    
+                    return fetch(`${API_BASE_URL}/${id}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(asset)
+                    });
+                })
+                .then(response => response.json())
+                .then(updatedAsset => {
+                    showNotification('Asset restored successfully', 'success');
+                    loadAssets();
+                })
+                .catch(error => {
+                    console.error('Error restoring asset:', error);
+                    showNotification('Error restoring asset', 'error');
+                });
+        }
+        
+        function resetForm() {
+            currentAssetId = null;
+            
+            assetIdInput.value = '';
+            assetNameInput.value = '';
+            assetDescriptionInput.value = '';
+            
+            statusDot.className = 'status-dot dot-active';
+            statusText.textContent = 'Active';
+            statusDot.style.backgroundColor = '#28a745';
+            
+            saveBtn.disabled = false;
+            updateBtn.disabled = true;
+            cancelBtn.disabled = true;
+            deleteBtn.disabled = true;
+            
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> Create Asset';
+            updateBtn.innerHTML = '<i class="fas fa-edit"></i> Update Asset';
+            
+            showNotification('Form reset', 'info');
+        }
+        
+        function showNotification(message, type = 'info') {
+            const notificationArea = document.getElementById('notificationArea');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            notificationArea.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+        }
+    </script>
 </body>
 </html>

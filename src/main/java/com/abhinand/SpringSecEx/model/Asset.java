@@ -1,23 +1,23 @@
 package com.abhinand.SpringSecEx.model;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "assets")
 public class Asset {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private String description;
+    private String originalName;
+    private String storedName;
+    private String contentType;
+    private Long size;
 
     private boolean deleted = false;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public Long getId() {
         return id;
@@ -27,20 +27,36 @@ public class Asset {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getOriginalName() {
+        return originalName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setOriginalName(String originalName) {
+        this.originalName = originalName;
     }
 
-    public String getDescription() {
-        return description;
+    public String getStoredName() {
+        return storedName;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setStoredName(String storedName) {
+        this.storedName = storedName;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public Long getSize() {
+        return size;
+    }
+
+    public void setSize(Long size) {
+        this.size = size;
     }
 
     public boolean isDeleted() {
@@ -51,4 +67,11 @@ public class Asset {
         this.deleted = deleted;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
